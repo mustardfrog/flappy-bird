@@ -17,11 +17,13 @@ typedef struct GameState {
   bool game_over;
 } State;
 
-State state = {.collided = false, .pause = false, .started = false, .game_over = false };
+State state = {
+    .collided = false, .pause = false, .started = false, .game_over = false};
 
 typedef struct Ball {
-  Vector2 pos_v;
-  Vector2 size_v;
+  Rectangle rect;
+  // Vector2 pos_v;
+  // Vector2 size_v;
   float velocity;
 } ball;
 
@@ -33,10 +35,10 @@ void jump_ball(struct Ball *ball) {
 
 void update_ball(struct Ball *ball) {
   ball->velocity += GRAVITY;
-  ball->pos_v.y += ball->velocity;
+  ball->rect.y += ball->velocity;
 
-  if (ball->pos_v.y >= HEIGHT - ball->size_v.y) {
-    ball->pos_v.y = HEIGHT - ball->size_v.y;
+  if (ball->rect.y >= HEIGHT - ball->rect.height) {
+    ball->rect.y = HEIGHT - ball->rect.height;
   }
 }
 
@@ -84,8 +86,7 @@ int main(void) {
   InitWindow(WIDTH, HEIGHT, "flappy bird");
 
   struct Ball ball;
-  ball.pos_v = (Vector2){70.0f, 100.0f};
-  ball.size_v = (Vector2){30.0f, 30.0f};
+  ball.rect = (Rectangle){70.0f, 100.0f, 30.0f, 30.0f};
   ball.velocity = 0;
 
   struct Pipe pipes[2] = {};
@@ -108,7 +109,7 @@ int main(void) {
     ClearBackground(RAYWHITE);
     jump_ball(&ball);
     update_ball(&ball);
-    DrawRectangleV(ball.pos_v, ball.size_v, DARKBLUE);
+    DrawRectangleRec(ball.rect, DARKBLUE);
 
     for (int i = 0; i < sizeof(pipes) / sizeof(pipe); i++) {
       update_pipe(&pipes[i]);
