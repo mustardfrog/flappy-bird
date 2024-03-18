@@ -11,7 +11,7 @@
 #define COL 5
 
 const float GRAVITY = 0.5;
-const float JUMP_VELOCITY = -9;
+const float JUMP_VELOCITY = -8;
 float pipe_velocity = 1.5f;
 
 typedef struct {
@@ -29,16 +29,22 @@ typedef struct Ball {
   Sound jump_sound;
   Sound boom_sound;
   Texture2D explosion_texture;
+  Texture2D bird_texture;
 } ball;
 
-void init_ball(struct Ball *ball) {
-  ball->rect = (Rectangle){70.0f, 100.0f, 30.0f, 30.0f};
-  ball->velocity = 0;
-  ball->jump_sound = LoadSound("assets/sounds/8_bit_jumps/SFX_Jump_09.wav");
-  ball->boom_sound = LoadSound("assets/sounds/boom.wav");
-  ball->explosion_texture = LoadTexture("assets/explosion.png");
-  SetSoundVolume(ball->jump_sound, 1.0);
-  SetSoundVolume(ball->boom_sound, .8);
+void init_ball(struct Ball *b) {
+  b->rect = (Rectangle){70.0f, 100.0f, 40.0f, 40.0f};
+  b->velocity = 0;
+  b->jump_sound = LoadSound("assets/sounds/8_bit_jumps/SFX_Jump_09.wav");
+  b->boom_sound = LoadSound("assets/sounds/boom.wav");
+  b->explosion_texture = LoadTexture("assets/explosion.png");
+  Image bird_image = LoadImage("assets/blue_flappy.png");
+  ImageResize(&bird_image, b->rect.width, b->rect.height);
+  b->bird_texture = LoadTextureFromImage(bird_image);
+  UnloadImage(bird_image);
+
+  SetSoundVolume(b->jump_sound, 1.0);
+  SetSoundVolume(b->boom_sound, .8);
 }
 
 void jump_ball(struct Ball *ball) {
@@ -61,6 +67,7 @@ void clean_ball(ball *b) {
   UnloadSound(b->jump_sound);
   UnloadSound(b->boom_sound);
   UnloadTexture(b->explosion_texture);
+  UnloadTexture(b->bird_texture);
 }
 
 void play_boom_animation(ball *b) {}
@@ -170,8 +177,11 @@ int main(void) {
       jump_ball(&ball);
       ClearBackground(RAYWHITE);
       update_ball(&ball);
-      DrawRectangleRec(ball.rect, DARKBLUE);
+      // DrawRectangleRec(ball.rect, DARKBLUE);
+      // DrawTextureRec(ball.bird_texture, ball.rect,
+      //                (Vector2){ball.rect.x, ball.rect.y}, WHITE);
 
+      DrawTexture(ball.bird_texture, (int)ball.rect.x, (int)ball.rect.y, WHITE);
       for (int i = 0; i < sizeof(pipes) / sizeof(Pipe); i++) {
         update_pipe(&pipes[i]);
         draw_pipe(&pipes[i]);
@@ -219,7 +229,7 @@ int main(void) {
                        (Vector2){ball.rect.x - frame_width / 2,
                                  ball.rect.y - frame_height / 2},
                        WHITE);
-        if (current_frame == ROW -1 && current_line == COL - 1) {
+        if (current_frame == ROW - 1 && current_line == COL - 1) {
           ClearBackground(BLACK);
         }
       }
