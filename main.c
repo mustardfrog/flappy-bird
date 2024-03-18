@@ -190,6 +190,7 @@ int main(void) {
     }
 
     if (state.game_over) {
+      state.score = 0;
       DrawText("GAME OVER", GetScreenWidth() / 2, GetScreenHeight() / 2, 20,
                RED);
       if (active) {
@@ -218,7 +219,7 @@ int main(void) {
                        (Vector2){ball.rect.x - frame_width / 2,
                                  ball.rect.y - frame_height / 2},
                        WHITE);
-        if (current_frame == ROW && current_line == COL) {
+        if (current_frame == ROW -1 && current_line == COL - 1) {
           ClearBackground(BLACK);
         }
       }

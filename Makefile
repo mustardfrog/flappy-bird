@@ -6,6 +6,3 @@ main: $(SRCS)
 run: $(SRCS)
 	g++ $(SRCS) -o main $(FLAGS)
 	./main
-
-notMain: notMain.cpp
-	g++ notMain.cpp -o notMain $(FLAGS) 
